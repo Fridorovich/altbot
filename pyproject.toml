@@ -2,6 +2,7 @@
 name = "vk-bot"
 version = "0.1.0"
 description = "VK Bot for country statistics"
+authors = ["Egor Stolbov"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
