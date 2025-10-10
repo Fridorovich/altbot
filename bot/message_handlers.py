@@ -16,6 +16,12 @@ def send_country_stata(vk, db_manager, user_id, country_id):
         user_id=user_id,
         message=format_stata(world_totals, main_data),
         random_id=0)
+
+def send_bad_curreny_convertion_format_error(vk, user_id):
+    vk.messages.send(
+        user_id=user_id,
+        message=f"Должен быть такой формат команды: \"перевод валюта1 в валюта2\"",
+        random_id=0)
     
 def send_throw_error(vk, user_id):
     vk.messages.send(

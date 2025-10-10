@@ -18,8 +18,19 @@ class DBManager:
         if self.conn:
             self.conn.close()
 
-    def select_country_names(self):
+    def select_country_pseudonims(self):
         self.cursor.execute('SELECT * FROM country_pseudonims;')
+        return self.cursor.fetchall()
+    
+    def select_country_names(self):
+        self.cursor.execute('SELECT * FROM country_names')
+        return self.cursor.fetchall()
+    
+    def get_currencies(self):
+        self.cursor.execute('''
+            SELECT * FROM currencies
+        ''')
+
         return self.cursor.fetchall()
 
     def get_country_data(self, country_id):
