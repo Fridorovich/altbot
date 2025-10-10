@@ -22,3 +22,29 @@ def send_throw_error(vk, user_id):
         user_id=user_id,
         message="Ты сломал бота. Доволен?\nНапиши разрабу",
         random_id=0)
+    
+def send_message(vk, user_id, message):
+    vk.messages.send(
+        user_id=user_id,
+        message=message,
+        random_id=0
+    )
+
+def send_guide(vk, user_id):
+    GUIDE = '''
+        Вот что я могу:
+        "Стата Поностиум" (вставьте любое интересующее государство)
+
+        "Топ X Категория":
+        -- "население"
+        -- "ввп"
+        -- "доходы"
+        -- "расходы"
+        
+        "антитоп X Категория" (Думаю тут всё очев)
+    '''
+    vk.messages.send(
+        user_id=user_id,
+        message=GUIDE,
+        random_id=0
+    )
