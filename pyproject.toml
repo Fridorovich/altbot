@@ -5,8 +5,9 @@ description = "VK Bot for country statistics"
 authors = ["Egor Stolbov"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 vk-api = "^11.9.9"
+levenshtein = "^0.27.1"
 
 [tool.poetry.dev-dependencies]
 

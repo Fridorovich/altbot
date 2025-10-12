@@ -1,5 +1,6 @@
 import sqlite3
 
+from utils.dataclasses import TopMetadata
 
 class DBManager:
     def __init__(self, db_name):
@@ -17,8 +18,19 @@ class DBManager:
         if self.conn:
             self.conn.close()
 
-    def select_country_names(self):
+    def select_country_pseudonims(self):
         self.cursor.execute('SELECT * FROM country_pseudonims;')
+        return self.cursor.fetchall()
+    
+    def select_country_names(self):
+        self.cursor.execute('SELECT * FROM country_names')
+        return self.cursor.fetchall()
+    
+    def get_currencies(self):
+        self.cursor.execute('''
+            SELECT * FROM currencies
+        ''')
+
         return self.cursor.fetchall()
 
     def get_country_data(self, country_id):
@@ -62,3 +74,30 @@ class DBManager:
         JOIN population pop ON pop.country_id = e.country_id
         ''')
         return self.cursor.fetchone()
+    
+    def get_top_countries(self, metadata):
+        query = '''
+        SELECT country_names.name AS name, ({}) AS value FROM {}
+        JOIN country_names ON country_names.country_id = {}.country_id
+        ORDER BY value {}
+        LIMIT ?;
+        '''.format(metadata.column, metadata.table, metadata.table, metadata.order_type,)
+
+        self.cursor.execute(query, (metadata.limit,))
+
+        return self.cursor.fetchall()
+    
+    def get_gdp_ppp_top(self, metadata):
+        query = '''
+            SELECT country_names.name AS name, 
+            (economy.gdb / (IFNULL(population_ss, 0) + IFNULL(population_ns, 0) + IFNULL(population_nns, 0) + IFNULL(population_nnns, 0)) * 1000000000) AS gdp_ppp
+            FROM country_names
+            JOIN economy ON country_names.country_id = economy.country_id
+            JOIN population ON country_names.country_id = population.country_id
+            ORDER BY gdp_ppp {}
+            LIMIT ?
+        '''.format(metadata.order_type)
+
+        self.cursor.execute(query, (metadata.limit,))
+
+        return self.cursor.fetchall()
