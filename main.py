@@ -1,6 +1,7 @@
 from bot.bot import VKBot
 from database.db_manager import DBManager
 from config import TOKEN, GROUP_ID, DB_NAME
+from infographic.CountryInfographic import CountryInfographic
 
 
 def main():

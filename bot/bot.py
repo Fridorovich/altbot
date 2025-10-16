@@ -2,6 +2,7 @@ import vk_api
 import Levenshtein
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from bot.message_handlers import *
+from infographic.CountryInfographic import CountryInfographic
 from utils.dataclasses import TopMetadata
 
 class VKBot:
@@ -143,9 +144,10 @@ class VKBot:
             self.vk, 
             self.db_manager, 
             user_id, 
-            country_id)
+            country_id,
+            self.vk_session)
 
-        return 
+        return
     
     def _handle_event_top(self, user_id, category, order_type, limit = 10):
         if limit <= 0:
@@ -185,7 +187,7 @@ class VKBot:
     def _handle_subevent_top(self, user_id, top_metadata):
         top = self.db_manager.get_top_countries(top_metadata)
 
-        message = f"{"Топ" if top_metadata.order_type == "DESC" else "Антитоп"} {top_metadata.limit} государств в категории {top_metadata.category}\n"
+        message = f"{'Топ' if top_metadata.order_type == 'DESC' else 'Антитоп'} {top_metadata.limit} государств в категории {top_metadata.category}\n"
         i = 1 if top_metadata.order_type == "DESC" else self.get_country_count()
 
         for row in top:
@@ -200,7 +202,7 @@ class VKBot:
     def _handle_gdp_ppp_top(self, user_id, top_metadata):
         top = self.db_manager.get_gdp_ppp_top(top_metadata)
 
-        message = f"{"Топ" if top_metadata.order_type == "DESC" else "Антитоп"} {top_metadata.limit} государств в категории {top_metadata.category}\n"
+        message = f"{'Топ' if top_metadata.order_type == 'DESC' else 'Антитоп'} {top_metadata.limit} государств в категории {top_metadata.category}\n"
         i = 1 if top_metadata.order_type == "DESC" else self.get_country_count()
 
         for row in top:
@@ -220,7 +222,7 @@ class VKBot:
                 order_type=top_metadata.order_type, 
                 limit=top_metadata.limit))
         
-        message = f"{"Топ" if top_metadata.order_type == "DESC" else "Антитоп"} {top_metadata.limit} государств в категории {top_metadata.category}\n"
+        message = f"{'Топ' if top_metadata.order_type == 'DESC' else 'Антитоп'} {top_metadata.limit} государств в категории {top_metadata.category}\n"
         i = 1 if top_metadata.order_type == "DESC" else self.get_country_count()
 
         top = list(zip(percent_top, unit_top))

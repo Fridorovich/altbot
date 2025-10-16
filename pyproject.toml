@@ -8,6 +8,11 @@ authors = ["Egor Stolbov"]
 python = "^3.9"
 vk-api = "^11.9.9"
 levenshtein = "^0.27.1"
+matplotlib = "^3.7.0"
+pillow = "^10.0.0"
+seaborn = "^0.12.2"
+pandas = "^2.0.0"
+numpy = "^1.24.0"
 
 [tool.poetry.dev-dependencies]
 
