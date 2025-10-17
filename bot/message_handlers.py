@@ -25,19 +25,21 @@ def send_country_stata(vk, db_manager, user_id, country_id, vk_session):
     output_file_path = f'infographic/infos/{country_name}_infographic.png'
 
     os.makedirs('infographic/infos', exist_ok=True)
-    os.makedirs('flags', exist_ok=True)
 
-    if not os.path.exists(data_file_path):
-        print(f"Файл статистики не найден: {data_file_path}")
+    must_created = False
+    if not os.path.exists(output_file_path):
+        print(f"Файл инфографики не найден: {output_file_path}")
+        must_created = True
 
     try:
-        infographic = CountryInfographic(data_file_path, flags_folder_path, country_name)
-        infographic.print_parsed_data()
-        if not infographic.create_infographic(output_file_path):
-            vk.messages.send(
-                user_id=user_id,
-                message=format_stata(world_totals, main_data),
-                random_id=0)
+        if must_created:
+            infographic = CountryInfographic(data_file_path, flags_folder_path, country_name)
+            infographic.print_parsed_data()
+            if not infographic.create_infographic(output_file_path):
+                vk.messages.send(
+                    user_id=user_id,
+                    message=format_stata(world_totals, main_data),
+                    random_id=0)
 
         upload = VkUpload(vk_session)
         photo = upload.photo_messages(output_file_path)

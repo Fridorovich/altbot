@@ -281,7 +281,7 @@ class CountryInfographic:
 
         ax_flag = fig.add_subplot(gs[1, 0])
         ax_flag.axis('off')
-        flag_path = os.path.join(self.flags_folder, f"{self.country_name.lower()}.png")
+        flag_path = os.path.join(self.flags_folder, "flags/" + f"{self.country_name.lower()}.png")
 
         if os.path.exists(flag_path):
             try:

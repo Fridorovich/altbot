@@ -4,6 +4,7 @@ from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from bot.message_handlers import *
 from infographic.CountryInfographic import CountryInfographic
 from utils.dataclasses import TopMetadata
+from config import STANDARD_MESSAGE
 
 class VKBot:
     def __init__(self, token, group_id, db_manager):
@@ -78,6 +79,12 @@ class VKBot:
                     )
                 else:
                     self._handle_event_top(user_id, message_arr[1], "ASC")
+            else:
+                send_message(
+                    self.vk,
+                    user_id,
+                    STANDARD_MESSAGE)
+
                 
                 
     def _handle_event_currency_convertion(self, user_id, message_arr):
