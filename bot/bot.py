@@ -1,5 +1,4 @@
 import vk_api
-import Levenshtein
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from bot.message_handlers import *
 from infographic.CountryInfographic import CountryInfographic
