@@ -52,6 +52,10 @@ def setup_percent_or_unit_qualifier_keyboard():
 
     return keyboard
 
+def setup_back_keyboard():
+    back =  VkKeyboard(inline=True)
+    back.add_callback_button("Назад", payload={"button": Keyboards.BACK.BACK} | event_type)
+
 def setup_static_keyboards():
     keyboards = {}
     
@@ -60,6 +64,7 @@ def setup_static_keyboards():
     keyboards[Keyboards.MAIN_CATEGORIES] = setup_main_categories_keyboard()
     keyboards[Keyboards.POP_CATEGORIES] = setup_pop_categories_keyboard()
     keyboards[Keyboards.PERCENT_OR_UNIT_QUALIFIER] = setup_percent_or_unit_qualifier_keyboard()
+    keyboards[Keyboards.BACK] = setup_back_keyboard()
 
     return keyboards
 

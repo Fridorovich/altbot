@@ -49,3 +49,6 @@ class Keyboards(Enum):
     class PERCENT_OR_UNIT_QUALIFIER(BaseKeyboard, Enum):
         PERCENT = "percent"
         UNIT = "unit"
+
+    class BACK(BaseKeyboard, Enum):
+        BACK = "back"
