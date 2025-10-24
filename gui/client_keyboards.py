@@ -1,93 +1,6 @@
-from enum import Enum, auto
+from typing import List
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
-
-# class KeyboardStates(Enum):
-#     START = auto()
-#     MAIN_MENU = auto()
-#     MAIN_CATEGORIES = auto()
-#     POP_CATEGORIES = auto()
-#     PERCENT_OR_UNIT_QUALIFIER = auto()
-#     N_COUNTRY_CHOICE = auto()
-#     DEAD_END = auto()
-
-# class Keyboards(Enum):
-#     TOP = "top"
-#     ANTITOP = "antitop"
-#     STATA = "stata"
-#     SLICE = "slice"
-#     CONVERTER = "converter"
-#     POP = "pop"
-#     GDP = "gdp"
-#     INCOME = "income"
-#     EXPENSE = "expense"
-#     PPP = "ppp"
-#     PERCENT = "percent"
-#     UNIT = "unit"
-#     TOTAL_POP = "total pop"
-#     POP_SS = "pop ss"
-#     POP_NS = "pop ns"
-#     POP_NNS = "pop nns"
-#     POP_NNNS = "pop nnns"
-#     BACK = "back"
-from enum import Enum
-from abc import ABC
-
-class BaseKeyboard(ABC):
-    """Base class with common keyboard functionality"""
-    
-    def is_keyboard_button(self, button):
-        return button in self.get_buttons()
-    
-    @classmethod
-    def get_buttons(cls):
-        return [member.value for member in cls]
-    
-    @classmethod
-    def get_button_names(cls):
-        return [member.name for member in cls]
-    
-    @classmethod
-    def validate_button(cls, button):
-        if button not in cls.get_buttons():
-            raise ValueError(f"Invalid button '{button}'. Valid options: {cls.get_buttons()}")
-        return cls(button)
-
-class Keyboards(Enum):
-    class START(BaseKeyboard, Enum):
-        START = "start"
-
-    class MAIN_MENU(BaseKeyboard, Enum):
-        TOP = "top"
-        ANTITOP = "antitop"
-        STATA = "stata"
-        SLICE = "slice"
-        CONVERTER = "converter"
-
-    class MAIN_CATEGORIES(BaseKeyboard, Enum):
-        POP = "pop"
-        GDP = "gdp"
-        INCOME = "income"
-        EXPENSE = "expense"
-        PPP = "ppp"
-
-    class POP_CATEGORIES(BaseKeyboard, Enum):
-        TOTAL_POP = "total pop"
-        POP_SS = "pop ss"
-        POP_NS = "pop ns"
-        POP_NNS = "pop nns"
-        POP_NNNS = "pop nnns"
-
-    class PERCENT_OR_UNIT_QUALIFIER(BaseKeyboard, Enum):
-        PERCENT = "percent"
-        UNIT = "unit"
-    
-    # class AMOUNTS_TO_CHOOSE(BaseKeyboard, Enum):
-    #     FIVE = "5"
-    #     TEN = "10"
-    #     TWENTY = "20"
-    #     THIRTY = "30"
-    #     FIFTY = "50"
-    #     SEVENTY = "70"
+from gui.keyboards_enum import Keyboards
  
 event_type = {"type": "button_click", "kind": "static"}
 
@@ -147,47 +60,8 @@ def setup_static_keyboards():
     keyboards[Keyboards.MAIN_CATEGORIES] = setup_main_categories_keyboard()
     keyboards[Keyboards.POP_CATEGORIES] = setup_pop_categories_keyboard()
     keyboards[Keyboards.PERCENT_OR_UNIT_QUALIFIER] = setup_percent_or_unit_qualifier_keyboard()
-    # keyboards[Keyboards.AMOUNTS_TO_CHOOSE] = setup_amounts_to_choose_keyboard()
 
     return keyboards
-
-def generate_n_country_choice(countries: dict[int, str], page, page_limit = 8):
-    n_country_choice = VkKeyboard(inline=True)
-
-    for id in range(page_limit * page + 1, page_limit * (page + 1) + 1):
-        n_country_choice.add_callback_button(
-            countries[id], 
-            payload={
-                "button": f"{id};{countries[id]}", 
-                "type": "button_click", 
-                "kind": "dynamic", 
-                "details": None
-            }
-        )
-        n_country_choice.add_line()
-        
-    n_country_choice.add_callback_button(
-        "<<", 
-        payload={
-            "button": f"{id};{countries[id]}", 
-            "type": "button_click", 
-            "kind": "dynamic", 
-            "details": "<<"
-        }
-    )
-
-    n_country_choice.add_callback_button(
-        "<", 
-        payload={
-            "button": f"{id};{countries[id]}", 
-            "type": "button_click", 
-            "kind": "dynamic", 
-            "details": "<"
-        }
-    )
-
-    '''Вот примерно на этом шаге я понял, что всё это ебучая хуйня'''
-    
 
 class ClientKeyboardsPool:
     static_keyboards = setup_static_keyboards()
@@ -206,38 +80,36 @@ class ClientKeyboardsPool:
             except json.JSONDecodeError:
                 # Вот такие пироги
                 return {"type": "not_button"}
+
+    def create_n_country_choice_keyboard(self, countries: dict[int, List[str, bool]], page, page_limit = 8):
+        n_country_choice = VkKeyboard(inline=True)
+
+        for id in range(page_limit * page + 1, page_limit * (page + 1) + 1):
+            n_country_choice.add_callback_button(
+                countries[id][0], 
+                payload={
+                    "button": "country", 
+                    "type": "button_click", 
+                    "kind": "dynamic", 
+                    "already_selected": "False" if countries[id][1] else "True",
+                    "id": f"{id}"
+                }
+            )
+            n_country_choice.add_line()
+
+        slider_payload = lambda str: (str, {"button": "page_change", "type": "button_click", "kind": "dynamic", "details": str})
+            
+        for s in ["<<", "<", ">", ">>"]:
+            label, payload = slider_payload(s)
+            n_country_choice.add_callback_button(label, payload=payload)
         
-    def _parse_static_keyboard_layout(self, button_type):
-        if Keyboards.START.is_keyboard_button(button_type):
-
-            return self.static_keyboards[Keyboards.MAIN_MENU]
-        
-        elif Keyboards.MAIN_MENU.is_keyboard_button(button_type):
-
-            if button_type in [Keyboards.MAIN_MENU.TOP, Keyboards.MAIN_MENU.ANTITOP]:
-                return self.static_keyboards[Keyboards.MAIN_CATEGORIES]
-            elif button_type is Keyboards.MAIN_MENU.STATA:
-                return lambda countries: generate_n_country_choice(countries, 0)
-        elif Keyboards.MAIN_CATEGORIES.is_keyboard_button(button_type):
-            return
-        elif Keyboards.POP_CATEGORIES.is_keyboard_button(button_type):
-            return
-        elif Keyboards.PERCENT_OR_UNIT_QUALIFIER.is_keyboard_button(button_type):
-            return
-        else: raise Exception("Не смог распарсить статическую клаву, не тот ээээ лэйаут???")
-
-    '''Парсит нажатие кнопки и возвращает следующий лэйаут (теоретически)'''
-    def parse_button_click_event(self, payload: str):
-        dict = self._try_parse_event_payload(payload)
-
-        if dict["type"] != event_type["type"]:
-            return
-
-        button = dict["button"]
-        kind = dict["kind"]
-
-        if kind == "static":
-            return self._parse_static_keyboard_layout(button)
-        elif kind == "dynamic":
-            return self._parse_dynamic_keyboard_layout(button, dict["details"])
-        else: raise Exception("Это точно кнопка, но она ни static, ни dynamic")
+    def create_start_keyboard(self):
+        return self.static_keyboards[Keyboards.START]
+    def create_main_menu_keyboard(self):
+        return self.static_keyboards[Keyboards.MAIN_MENU]
+    def create_main_categories_keyboard(self):
+        return self.static_keyboards[Keyboards.MAIN_CATEGORIES]
+    def create_pop_categories_keyboard(self):
+        return self.static_keyboards[Keyboards.POP_CATEGORIES]
+    def create_percent_or_unit_keyboard(self):
+        return self.static_keyboards[Keyboards.PERCENT_OR_UNIT_QUALIFIER]
