@@ -1,11 +1,11 @@
 from enum import Enum
-from abc import ABC
 
-class BaseKeyboard(ABC):
-    """Base class with common keyboard functionality"""
+class KeyboardEnum(Enum):
+    """Base Enum class with keyboard functionality"""
     
-    def is_keyboard_button(self, button):
-        return button in self.get_buttons()
+    @classmethod
+    def is_keyboard_button(cls, button):
+        return button in cls.get_buttons()
     
     @classmethod
     def get_buttons(cls):
@@ -19,36 +19,55 @@ class BaseKeyboard(ABC):
     def validate_button(cls, button):
         if button not in cls.get_buttons():
             raise ValueError(f"Invalid button '{button}'. Valid options: {cls.get_buttons()}")
-        return cls(button)
+        for member in cls:
+            if member.value == button:
+                return member
+        raise ValueError(f"Button '{button}' not found")
+    
+    def __str__(self):
+        return str(self.value)
+    
+    def __repr__(self):
+        return f"{self.__class__.__name__}.{self.name}"
 
-class Keyboards(Enum):
-    class START(BaseKeyboard, Enum):
-        START = "start"
+# Keyboard enum classes
+class START(KeyboardEnum):
+    START = "start"
 
-    class MAIN_MENU(BaseKeyboard, Enum):
-        TOP = "top"
-        ANTITOP = "antitop"
-        STATA = "stata"
-        SLICE = "slice"
-        CONVERTER = "converter"
+class MAIN_MENU(KeyboardEnum):
+    TOP = "top"
+    ANTITOP = "antitop" 
+    STATA = "stata"
+    SLICE = "slice"
+    CONVERTER = "converter"
 
-    class MAIN_CATEGORIES(BaseKeyboard, Enum):
-        POP = "pop"
-        GDP = "gdp"
-        INCOME = "income"
-        EXPENSE = "expense"
-        PPP = "ppp"
+class MAIN_CATEGORIES(KeyboardEnum):
+    POP = "pop"
+    GDP = "gdp"
+    INCOME = "income"
+    EXPENSE = "expense"
+    PPP = "ppp"
 
-    class POP_CATEGORIES(BaseKeyboard, Enum):
-        TOTAL_POP = "total pop"
-        POP_SS = "pop ss"
-        POP_NS = "pop ns"
-        POP_NNS = "pop nns"
-        POP_NNNS = "pop nnns"
+class POP_CATEGORIES(KeyboardEnum):
+    TOTAL_POP = "total pop"
+    POP_SS = "pop ss"
+    POP_NS = "pop ns"
+    POP_NNS = "pop nns"
+    POP_NNNS = "pop nnns"
 
-    class PERCENT_OR_UNIT_QUALIFIER(BaseKeyboard, Enum):
-        PERCENT = "percent"
-        UNIT = "unit"
+class PERCENT_OR_UNIT_QUALIFIER(KeyboardEnum):
+    PERCENT = "percent"
+    UNIT = "unit"
 
-    class BACK(BaseKeyboard, Enum):
-        BACK = "back"
+class BACK(KeyboardEnum):
+    BACK = "back"
+
+# Simple container - no need for complex class
+Keyboards = {
+    'START': START,
+    'MAIN_MENU': MAIN_MENU,
+    'MAIN_CATEGORIES': MAIN_CATEGORIES,
+    'POP_CATEGORIES': POP_CATEGORIES,
+    'PERCENT_OR_UNIT_QUALIFIER': PERCENT_OR_UNIT_QUALIFIER,
+    'BACK': BACK
+}

@@ -1,6 +1,8 @@
 GROUP_ID = '233108436'
 TOKEN = 'vk1.a.200g0BxrbkjKVPVhgJ0JDFnyTTh-k4hpVKDzzJeL1VSJTEDboIMeyyyYJy2ZIdbcZSdCaRCzj-sbWI43HZMLFyjnxli8W1WUmhaPLb97FJWtBzOOEseoAHLzy35lbawbzuA4GU62Ict7I_b_aLYDB-NnbvuOeoi57tV9eCLPyPSQCcgcMmBOC-Ve2Se28luqj8eUSg2z9XdfYzPMnrKmYQ'
 DB_NAME = 'test.db'
+DB_PATH = 'dbs/'
+
 
 STATA_FORMAT = '''
 1. {0}
