@@ -1,5 +1,4 @@
 import vk_api
-import Levenshtein
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from bot.message_handlers import *
 from infographic.CountryInfographic import CountryInfographic
@@ -12,7 +11,7 @@ class VKBot:
         self.vk = self.vk_session.get_api()
         self.longpoll = VkBotLongPoll(self.vk_session, group_id)
         self.db_manager = db_manager
-        self.country_pseudonims = self.db_manager.select_country_pseudonims()
+        self.country_pseudonims = self.db_manager.select_country_pseudonyms()
         self.country_names = None
         self.country_count = None
         self.currencies = self.db_manager.get_currencies()
